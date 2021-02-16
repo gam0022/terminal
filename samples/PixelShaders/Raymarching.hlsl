@@ -13,7 +13,7 @@ static const float2 _BallAlbedoHue = float2(0.1, -2.36);
 static const float _BallRepeat = 4;
 static const float3 _FloorAlbedoA = float3(0, 0, 0);
 static const float3 _FloorAlbedoB = float3(0.8396226, 0.8396226, 0.8396226);
-static const float3 _SkyTopColor = float3( 0.41509432, 0.21342114, 0.38110238);
+static const float3 _SkyTopColor = float3(0.41509432, 0.21342114, 0.38110238);
 static const float3 _SkyBottomColor = float3(0, 0, 0);
 static const float3 light = normalize(float3(1, 2, 1));// 平行光源の方向ベクトル
 
@@ -33,7 +33,6 @@ float3 hsvToRgb(float3 c)
     float3 p = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);
     return c.z * lerp(K.xxx, saturate(p - K.xxx), c.y);
 }
-
 
 float sdSphere(float3 p, float r)
 {
@@ -218,7 +217,7 @@ float3 raymarching(inout float3 origin, inout float3 ray, inout bool hit, inout 
     return col;
 }
 
-float3 frag_entry(float2 pos)
+float3 mainRaymarching(float2 pos)
 {
     float3 col = float3(0.0, 0.0, 0.0);
     
@@ -270,9 +269,7 @@ float4 main(float4 pos : SV_POSITION, float2 tex : TEXCOORD) : SV_TARGET
 
     // TODO:GH#3930 Make these configurable in some way.
     float4 color = input.Sample(samplerState, tex);
-    // color += Blur(input, tex, SCALED_GAUSSIAN_SIGMA)*0.3;
-    // color = Scanline(color, pos);
-    color.rgb += frag_entry(pos.xy);
+    color.rgb += mainRaymarching(pos.xy);
 
     return color;
 }
